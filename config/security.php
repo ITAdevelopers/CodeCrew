@@ -2,7 +2,12 @@
 
 class Security{
 
+/*
+@ method salt pasword
+@ uzima password koji mu je dat kao parametar i dodaje na njega salt i dodatak koji su takodje kriptovani
+@ vraca novi password koji nije ni u jednoj enkripciji
 
+ */
 	public function salt_password($password){
 
 		$salt = "CodeCrewTeamAlpha";
@@ -20,6 +25,6 @@ class Security{
 
 	}
 
-	
+
 }
 ?>
