@@ -5,7 +5,7 @@ private $con;
 private $pdo;
 private $pass;
 
-	public function __contruct(Database $conn,Security $security){
+	public function __construct(Database $conn,Security $security){
 		$this->con = $conn;
 		$this->pdo = $this->con->connect();
 		$this->pass = $security;
