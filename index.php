@@ -9,14 +9,20 @@ require "config/database.php";
 //Security klassa sa metodima za ekripciju i zastitu skripte
 require "config/Security.php";
 
+require "modules/cms/crud.php";
+
 //Metode vezane za ucitavanje podataka iz baze podataka  vezane za CMS sistem
 require "modules/cms/functions_cms.php";
+
+
 
 //Kreiramo objekat Security
 $security = new Security();
 
 //Kreiramo objekat Database koji je zaduzen za konekciju
 $conn = new Database();
+$crud = new Crud($conn);
+$crud->addPage("testiranje");
 
 //Kreiramo objekat Functions_cms i u konstruktor prosledjujemo konekciju sa bazom (PDO klassa)
 $objekat = new Functions_cms($conn);
