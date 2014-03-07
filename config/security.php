@@ -21,7 +21,13 @@ class Security{
 	}
 
 	public function filter_input($input){
-
+		if (preg_match('/^[a-zA-Z0-9]+$/', $input)){
+			return trim($input);
+		}
+		else {
+			header ('Location: 404.php');
+			exit();
+		}
 
 	}
 
