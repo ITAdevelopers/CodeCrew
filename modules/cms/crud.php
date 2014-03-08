@@ -322,7 +322,7 @@ private $pass;
 	}
 	public function list_pages()
 	{
-		$stm = $this->pdo->prepare('SELECT * FROM pages ORDER BY order');
+		$stm = $this->pdo->prepare('SELECT * FROM pages');
 		$stm->execute();
 		$pages = $stm->fetchAll();
 		
