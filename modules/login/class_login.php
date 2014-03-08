@@ -18,7 +18,7 @@ class Login
   private $pdo;
 
   // Specijalna metoda konstruktor koja sluzi za podesavanje osobina objekta klase 
-  public function __construct(Database $conn)
+  public function __construct(database $conn)
   {
   	$this->con = $conn;
 	$this->pdo = $this->con->connect();
