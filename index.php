@@ -7,12 +7,12 @@ require "config/paths.php";
 require "config/database.php";
 
 //Security klassa sa metodima za ekripciju i zastitu skripte
-require "config/Security.php";
+require "config/security.php";
 
 require "modules/cms/crud.php";
 
 //Metode vezane za ucitavanje podataka iz baze podataka  vezane za CMS sistem
-//require "modules/cms/functions_cms.php";
+require "modules/cms/functions_cms.php";
 
 
 
@@ -22,10 +22,10 @@ $security = new Security();
 //Kreiramo objekat Database koji je zaduzen za konekciju
 $conn = new database();
 $crud = new Crud($conn, $security);
-$crud->addPage("testiranje");
+
 
 //Kreiramo objekat Functions_cms i u konstruktor prosledjujemo konekciju sa bazom (PDO klassa)
-/* $objekat = new Functions_cms($conn);
+$objekat = new Functions_cms($crud);
 
 //Pozivam metod Functions_cms pages_get(), kao povrat dobijam niz koji sadrzi sve redove tabele pages...to nam je glavni meni
 $stranice_menu = $objekat->pages_get();
@@ -43,12 +43,12 @@ if(!isset($_GET['title'])){
 	//U slucaju da postoji $_GET['title'] povuci ce zadnji arikal vezan za tu stranicu.
 }else{
 	$title = $_GET['title'];	
-  $stranica = $objekat->find_page($title);
+  $stranica = $objekat->artikal_get($title);
 }
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
 require "themes/index.php";
 
-*/
+
 ?>
 

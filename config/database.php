@@ -2,10 +2,10 @@
 
 class database{
 
-	private $host = 'localhost';
-	private $dbname = 'code_crew';
-	private $username = 'root';
-	private $password ='';  
+	private $host = 'mysql1001.mochahost.com';
+	private $dbname = 'nemesis_codecrew';
+	private $username = 'nemesis_code';
+	private $password ='code1234';  
 	private $opt = array(
 	      PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 	      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC

@@ -320,6 +320,14 @@ private $pass;
 			":what" => $what
 			));
 	}
+	public function list_pages()
+	{
+		$stm = $this->pdo->prepare('SELECT * FROM pages');
+		$stm->execute();
+		$pages = $stm->fetchAll();
+		
+		return $pages;
+	}
 
 }
 
