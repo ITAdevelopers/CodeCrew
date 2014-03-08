@@ -15,11 +15,13 @@ class Login
   private $_access;
   private $_login;
   private $_token;
+  private $pdo;
 
   // Specijalna metoda konstruktor koja sluzi za podesavanje osobina objekta klase 
-  public function __construct()
+  public function __construct(Database $conn)
   {
-  
+  	$this->con = $conn;
+	$this->pdo = $this->con->connect();
     $this->_errors = array();
     $this->_login  = isset($_POST['login'])? 1 : 0;
     $this->_access = 0;
@@ -75,17 +77,7 @@ class Login
   // Provera korisnika u bazi podataka
   public function verifyDatabase()
   {
-    // parametri konekcije
-   $host = 'localhost';
-   $dbname = 'code_crew';
-   $username = 'root';
-   $password ='';  
-   $opt = array(
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        );
-      // PDO konekcija na bazu podataka
-      $this->pdo = new PDO("mysql:host=$host;dbname=$dbname",$username, $password,$opt);
+
    
         // Kreiranje zasebnog pripremnog upitnog objekta 
       $stm=$this->pdo->prepare("SELECT id FROM users WHERE username =? AND password =?");

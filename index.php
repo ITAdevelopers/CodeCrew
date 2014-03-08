@@ -6,6 +6,8 @@ require "config/paths.php";
 //Ukljucena podesavanja baze podataka
 require "config/database.php";
 
+require 'modules/login/class_login.php';
+
 //Security klassa sa metodima za ekripciju i zastitu skripte
 require "config/security.php";
 
@@ -21,6 +23,7 @@ $security = new Security();
 
 //Kreiramo objekat Database koji je zaduzen za konekciju
 $conn = new database();
+$login = new Login($conn);
 $crud = new Crud($conn, $security);
 
 
