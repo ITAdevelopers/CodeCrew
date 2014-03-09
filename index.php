@@ -56,8 +56,8 @@ if($title_sec == 'false'){
 	header('Location: error.php');
 	die();
 }
-	$title = $_GET['title'];	
-  $stranica = $objekat->artikal_get($title);
+	
+  $stranica = $objekat->artikal_get($title_sec);
 }
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
