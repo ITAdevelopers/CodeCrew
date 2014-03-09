@@ -25,8 +25,7 @@ class Security{
 			return trim($input);
 		}
 		else {
-			header ('Location: 404.php');
-			exit();
+			return false;
 		}
 
 	}
