@@ -1,5 +1,8 @@
 <?php 
-
+  $mtime = microtime(); 
+   $mtime = explode(" ",$mtime); 
+   $mtime = $mtime[1] + $mtime[0]; 
+   $starttime = $mtime; 
 // Ukljucujemo podesavanja putanja
 require "config/paths.php";
 
@@ -30,6 +33,8 @@ $crud = new Crud($conn, $security);
 //Kreiramo objekat Functions_cms i u konstruktor prosledjujemo konekciju sa bazom (PDO klassa)
 $objekat = new Functions_cms($crud);
 
+
+
 //Pozivam metod Functions_cms pages_get(), kao povrat dobijam niz koji sadrzi sve redove tabele pages...to nam je glavni meni
 $stranice_menu = $objekat->pages_get();
 
@@ -45,13 +50,27 @@ if(!isset($_GET['title'])){
 
 	//U slucaju da postoji $_GET['title'] povuci ce zadnji arikal vezan za tu stranicu.
 }else{
+	$title_sec = $security->filter_input($_GET['title']);
+
+if($title_sec == 'false'){
+	header('Location: error.php');
+	die();
+}
 	$title = $_GET['title'];	
   $stranica = $objekat->artikal_get($title);
 }
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
 require "themes/index.php";
-
+?>
+<br />
+<?php
+$mtime = microtime(); 
+   $mtime = explode(" ",$mtime); 
+   $mtime = $mtime[1] + $mtime[0]; 
+   $endtime = $mtime; 
+   $totaltime = ($endtime - $starttime); 
+   echo "This page was created in ".$totaltime." seconds"; 
 
 ?>
 
