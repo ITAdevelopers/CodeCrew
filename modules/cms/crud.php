@@ -5,13 +5,14 @@ private $con;
 private $pdo;
 private $pass;
 
+	/*U construct stavljam Database radi lakseg pozivanja kao i security zbog pretvaranja sifre*/
 	public function __construct(Database $conn,Security $security){
 		$this->con = $conn;
 		$this->pdo = $this->con->connect();
 		$this->pass = $security;
 	}
 
-	//$pdo = new PDO ("mysql:host=localhost;dbname=code_crew","root","php");
+	//Zbog Joina query-a definisem unapred
 	protected $search_article = "SELECT articles.id,articles.page_id,pages.title,articles.content,articles.user_id,users.username,articles.created FROM articles 
 								LEFT JOIN pages ON articles.page_id = pages.id
 								LEFT JOIN users ON articles.user_id = users.id";
@@ -19,7 +20,8 @@ private $pass;
 	protected $search_user = "SELECT users.id, users.username, users.password, users.role, roles.role, users.last_login,users.created FROM users
 								LEFT JOIN roles ON users.role = roles.id";
 
-	//Create deo
+	/*Create deo
+	jednostavni insert query-i*/
 	public function addRole ($role) {
 		$query = $this->pdo->prepare("INSERT INTO roles (id,role) VALUES (null,:role)");
 		$query->execute(array(
@@ -54,7 +56,7 @@ private $pass;
 	}
 
 	//Delete deo
-
+	/*Gde god je moguce stavljeno je, ako je broj da brise po ID-u, ako je tekst da brise po imenu*/
 	public function deleteUser ($delete) {
 		if (is_numeric($delete)){
 			$query = $this->pdo->prepare ("DELETE FROM users WHERE id=:id LIMIT 1");
@@ -93,7 +95,7 @@ private $pass;
 				));
 		}
 		else{
-			$query =$this->pdo->prepare("DELETE FROM pages WHERE title=:title");
+			$query =$this->pdo->prepare("DELETE FROM pages WHERE title=:title LIMIT 1");
 			$query->execute(array(
 				":title"=>$page
 				));
@@ -109,25 +111,15 @@ private $pass;
 	}
 
 	//Read deo
-
-
+	//Pretraga po ID-u artikla
 	public function searchArticle ($article){
-		if (is_numeric($article)){
 			$query = $this->pdo->prepare($this->search_article . " WHERE articles.id=:id");
 			$query->execute(array(
 				":id" => $article
 				));
-		}
-
-		else { // treba jos
-			$query = $this->pdo->prepare($this->search_article . " WHERE articles.content LIKE :content");
-			$query->execute(array(
-				":content" => "%".$article."%"
-				));
-		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//Ako je broj pretraga po ID-u korisnika,ako je tekst po imenu korisnika
 	public function searchArticleByUser ($user) {
 		if (is_numeric($user)){
 		$query = $this->pdo->prepare ($this->search_article . " WHERE articles.user_id=:id");
@@ -143,8 +135,8 @@ private $pass;
 
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
-
 	}
+	//Pretraga po strani, ako je broj po ID-u,ako je tekst po imenu
 	public function searchArticleByPage ($page) {
 		if (is_numeric($page)){
 		$query = $this->pdo->prepare ($this->search_article . " WHERE articles.page_id=:id");
@@ -160,7 +152,7 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//Pretraga korisnika, broj ->Id-u, tekst po nazivu korisnika
 	public function searchUser($user){
 		if (is_numeric($user)){
 			$query = $this->pdo->prepare ($this->search_user . " WHERE users.id = :id");
@@ -176,7 +168,7 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//pretraga korisnika po ulozi,ako je broj po ID-u uloge,ako je tekst po nazivu uloge.
 	public function searchUserByRole($role){
 		if (is_numeric($role)) {
 			$query = $this->pdo->prepare ($this->search_user . " WHERE users.role = :role");
@@ -192,7 +184,7 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//Pretraga strane, broj->id , tekst -> nazivu stranice
 	public function searchPage($page){
 		if(is_numeric($page)){
 			$query = $this->pdo->prepare ("SELECT * FROM pages WHERE id=:id");
@@ -208,7 +200,7 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//Pretraga uloge, broj-> po id-u, tekst po nazivu uloge.
 	public function searchRole ($role){
 		if(is_numeric($role)){
 			$query = $this->pdo->prepare ("SELECT * FROM roles WHERE id=:id");
@@ -224,7 +216,7 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//Promena naziva uloge, ako je kao uslov postavljen broj,menja po njemu, u suprotnom menja po nazivu
 	public function changeRole ($what, $with){
 		if (is_numeric($what)){
 			$query = $this->pdo->prepare ("UPDATE roles SET role= :with WHERE id=:what");
@@ -242,7 +234,7 @@ private $pass;
 				));
 		}
 	}
-
+	//Promena naziva strane, ako je broj onda po ID-u,u suprotnom po nazivu
 	public function changePage ($what,$with){
 		if(is_numeric($what)){
 			$query = $this->pdo->prepare("UPDATE pages SET title = :with WHERE id = :what");
@@ -260,7 +252,7 @@ private $pass;
 		}
 
 	}
-
+	//Promena korisnickog imena, ako je broj po ID-u, u suprotnom po username-u
 	public function changeUsername ($what,$with){
 
 		if(is_numeric($what)){
@@ -278,7 +270,7 @@ private $pass;
 				));
 		}
 	}
-
+	//Promena sifre, ako je broj po ID-u, u suprotnom po username-u
 	public function changePassword ($what,$with) {
 		$pass = new Security;
 		if (is_numeric($what)){
@@ -296,7 +288,7 @@ private $pass;
 				));
 		}
 	} 
-
+	//Promena sadrzaja u Artiklu po ID-u
 	public function changeArticleContent($what,$with){
 		$query = $this->pdo->prepare ("UPDATE articles SET content = :with WHERE id=:what");
 		$query->execute(array(
@@ -304,7 +296,7 @@ private $pass;
 			":what" => $what
 			));
 	}
-
+	//Promena ID stranice, po id-u artikla
 	public function changeArticlePageId($what,$with){
 		$query = $this->pdo->prepare ("UPDATE articles SET page_id = :with WHERE id=:what");
 		$query->execute(array(
@@ -312,7 +304,7 @@ private $pass;
 			":what" => $what
 			));
 	}
-
+	//Promena korisnika koji je pisao artikal
 	public function changeArticleUserId($what,$with){
 		$query = $this->pdo->prepare ("UPDATE articles SET user_id = :with WHERE id=:what");
 		$query->execute(array(
@@ -320,6 +312,7 @@ private $pass;
 			":what" => $what
 			));
 	}
+	
 	public function list_pages()
 	{
 		$stm = $this->pdo->prepare('SELECT * FROM pages ORDER BY redosled ASC');
