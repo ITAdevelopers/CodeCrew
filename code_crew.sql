@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 03, 2014 at 04:53 PM
+-- Generation Time: Mar 12, 2014 at 09:16 PM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.12
 
@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
   `content` text,
   `user_id` int(11) unsigned DEFAULT NULL,
   `created` datetime DEFAULT NULL,
+  `permission` bit(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_page` (`page_id`),
   KEY `fk_user` (`user_id`)
@@ -49,7 +50,23 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
+  `redosled` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `resources`
+--
+
+CREATE TABLE IF NOT EXISTS `resources` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `article_id` int(11) unsigned DEFAULT NULL,
+  `role_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_resources` (`article_id`),
+  KEY `fk_resourcesRole` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -74,11 +91,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(32) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role` int(11) unsigned DEFAULT NULL,
+  `role_id` int(11) unsigned DEFAULT NULL,
   `last_login` datetime DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_role` (`role`)
+  KEY `fk_role` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
@@ -89,14 +106,21 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Constraints for table `articles`
 --
 ALTER TABLE `articles`
-  ADD CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_page` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_page` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `resources`
+--
+ALTER TABLE `resources`
+  ADD CONSTRAINT `fk_resources` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_resourcesRole` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
-  ADD CONSTRAINT `fk_role` FOREIGN KEY (`role`) REFERENCES `roles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
