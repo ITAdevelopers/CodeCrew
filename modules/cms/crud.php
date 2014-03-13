@@ -40,7 +40,7 @@ private $pass;
 			));
 	}
 
-	public function addUser($username,$password,$role){
+	public function addUser($username,$password,$role = 1){
 		$pass = new Security;
 		$query = $this->pdo->prepare ("INSERT INTO users (id,username,password,role_id,last_login,created) VALUES (null,:username, :password, :role, NOW(),NOW())");
 		$query->execute(array(
