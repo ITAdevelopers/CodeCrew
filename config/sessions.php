@@ -12,7 +12,7 @@ public function __construct(database $conn){
 	array($this, "_read"),
 	array($this, "_write"),
 	array($this, "_destroy"),
-	array($this, "_gc"),
+	array($this, "_gc")
 	
 	
 	);
@@ -35,8 +35,9 @@ public function _open(){
 }
 
 public function _close(){
+	$this->pdo = null;
 	//provera da li je konekcija zatvorena
-	if($this->pdo->close()){
+	if($this->pdo == null){
 		//ako jeste true
 		return true;
 	}else{
@@ -47,12 +48,14 @@ public function _close(){
 	
 public function _read($id){
 
-	$this->pdo->query('SELECT data FROM sessions WHERE id = :id');
-	$this->pdo->bind(':id', $id );
+	$stm = $this->pdo->prepare('SELECT data FROM sessions WHERE id = :id');
+	$stm->bindParam(':id', $id);
+	
+	
 
-	if($this->pdo->execute()){
+	if($stm->execute()){
 
-		$row = $this->pdo->single();
+		$row = $stm->fetchAll();
 
 		return $row['data'];
 
@@ -68,12 +71,12 @@ public function _write($id, $data){
 
 $access = time();
 
-$this->pdo->query('REPLACE INTO sessions VALUES ( :id, :access, :data) ');
-$this->pdo->bind(':id', $id);
-$this->pdo->bind(':access', $access);
-$this->pdo->bind(':data', $data);
+$stm =$this->pdo->prepare('REPLACE INTO sessions VALUES ( :id, :access, :data) ');
+$stm->bindParam(':id', $id);
+$stm->bindParam(':access', $access);
+$stm->bindParam(':data', $data);
 
-if($this->pdo->execute()){
+if($stm->execute()){
 	return true;
 }else{
 	return false;
@@ -82,11 +85,11 @@ if($this->pdo->execute()){
 }	
 public function _destroy($id){
 
-	$this->pdo->query('DELETE FROM sessions WHERE id = :id ');
+	$stm = $this->pdo->prepare('DELETE FROM sessions WHERE id = :id ');
 
-	$this->pdo->bind(':id', $id);
+	$stm->bindParam(':id', $id);
 
-	if($this->pdo->execute()){
+	if($stm->execute()){
 
 		return true;
 	}else{
@@ -98,11 +101,11 @@ public function _gc($max){
 
 	$old = time() - $max;
 
-	$this->pdo->query('DELETE * FROM sessions WHERE access < :old');
+	$stm = $this->pdo->prepare('DELETE * FROM sessions WHERE access < :old');
 
-	$this->pdo->bind(':old', $old);
+	$stm->bindParam(':old', $old);
 
-	if($this->pdo->execute()){
+	if($stm->execute()){
 
 		return true;
 	}else{
