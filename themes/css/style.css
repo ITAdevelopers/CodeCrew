@@ -1,0 +1,31 @@
+
+body{
+ background: rgba(255, 255, 255, 0.5) url(../images/pozadina.jpg)  0 50%;
+  
+        }
+
+#container{
+padding-left: 2%;
+width:80%;
+margin-left:auto;
+margin-right:auto;
+
+
+}
+
+
+
+@media (max-width: 767px) { 
+#firstcol{
+width: 100%;
+margin: 5px;
+padding: 5px;
+}
+#sidebar{
+width: 100%;
+margin: 5px;
+padding: 5px;
+
+}
+		
+ }
