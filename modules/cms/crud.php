@@ -5,6 +5,7 @@ private $con;
 private $pdo;
 private $pass;
 
+
 	/*U construct stavljam Database radi lakseg pozivanja kao i security zbog pretvaranja sifre*/
 	public function __construct(Database $conn,Security $security){
 		$this->con = $conn;
@@ -13,36 +14,40 @@ private $pass;
 	}
 
 	//Zbog Joina query-a definisem unapred
-	protected $search_article = "SELECT articles.id,articles.page_id,pages.title,articles.content,articles.user_id,users.username,articles.created,articles.permission FROM articles 
-								LEFT JOIN pages ON articles.page_id = pages.id
-								LEFT JOIN users ON articles.user_id = users.id";
+	protected $search_article = "SELECT articles.article_id,articles.page_id,pages.title,articles.content,articles.user_id,users.username,articles.created,articles.permission FROM articles 
+								LEFT JOIN pages ON articles.page_id = pages.page_id
+								LEFT JOIN users ON articles.user_id = users.user_id";
 
-	protected $search_user = "SELECT users.id, users.username, users.password, users.role_id,roles.role, users.last_login,users.created FROM users
-								LEFT JOIN roles ON users.role_id = roles.role";
+	protected $search_user = "SELECT users.user_id, users.username, users.password, users.role_id,roles.role, users.last_login,users.created FROM users
+								LEFT JOIN roles ON users.role_id = roles.role_id";
 
-	protected $search_resources = "SELECT resources.id, resources.article_id, resources.role_id FROM resources";
+	protected $search_resources = "SELECT resources.resource_id, resources.article_id,articles.content, resources.role_id, roles.role FROM resources
+									LEFT JOIN articles ON resources.article_id = articles.article_id
+									LEFT JOIN roles ON resources.role_id = roles.role_id";
 
 	/*Create deo
 	jednostavni insert query-i*/
-	public function addPage ($title) {
-		$query = $this->pdo->prepare("INSERT INTO pages (id,title,created) VALUES (null,:title,NOW())");
+	public function addPage ($title,$redosled) {
+		$query = $this->pdo->prepare("INSERT INTO pages (page_id,title,created,redosled) VALUES (null,:title,NOW(),:redosled)");
 		$query->execute(array(
-		 	':title' => $title
+		 	':title' => $title,
+		 	":redosled" => $redosled
 		 ));
 	}
 
-	public function addArticle ($page_id,$content,$user_id) {
-		$query = $this->pdo->prepare("INSERT INTO articles (id,page_id,content,user_id,created) VALUES (null,:page_id,:content,:user_id,NOW())" );
+	public function addArticle ($page_id,$content,$user_id,$permission = "") {
+		$query = $this->pdo->prepare("INSERT INTO articles (article_id,page_id,content,user_id,created,permission) VALUES (null,:page_id,:content,:user_id,NOW(),:permission)");
 		$query->execute(array(
 			':page_id' => $page_id,
 			':content' => $content,
-			':user_id' => $user_id
+			':user_id' => $user_id,
+			':permission' => $permission
 			));
 	}
 
 	public function addUser($username,$password,$role = 1){
 		$pass = new Security;
-		$query = $this->pdo->prepare ("INSERT INTO users (id,username,password,role_id,last_login,created) VALUES (null,:username, :password, :role, NOW(),NOW())");
+		$query = $this->pdo->prepare ("INSERT INTO users (user_id,username,password,role_id,last_login,created) VALUES (null,:username, :password, :role, NOW(),NOW())");
 		$query->execute(array(
 			':username' => $username,
 			':password' => $this->pass->salt_password($password),
@@ -51,17 +56,25 @@ private $pass;
 	}
 
 	public function addRole ($role) {
-		$query = $this->pdo->prepare("INSERT INTO roles (id,role) VALUES (null,:role)");
+		$query = $this->pdo->prepare("INSERT INTO roles (role_id,role) VALUES (null,:role)");
 		$query->execute(array(
 			':role' => $role
 			));
 	}
 
-	public function addResources ($article,$role){
-		$query = $this->pdo->prepare ("INSERT INTO resources (id,article_id,role_id) VALUES (null,:article, :role)");
+	public function addResource ($article,$role){
+		$query = $this->pdo->prepare ("INSERT INTO resources (resource_id,article_id,role_id) VALUES (null,:article, :role)");
 		$query->execute(array(
 			':article' => $article,
 			':role' => $role
+			));
+	}
+	//dodavanje slidera, ako se stavio samo url, dodaje ime i na aktivnost stavlja 0, a ako se stavi ime i 1, stavlja da odma' bude aktivan
+	public function addSlider ($url, $active = ""){
+		$query = $this->pdo->prepare ("INSERT INTO slider (slider_id,url,active) VALUES (null,:url, :active)");
+		$query->execute(array(
+			":url" => $url,
+			":active" => $active
 			));
 	}
 
@@ -69,7 +82,7 @@ private $pass;
 	/*Gde god je moguce stavljeno je, ako je broj da brise po ID-u, ako je tekst da brise po imenu*/
 	public function deletePage($page){
 		if (is_numeric($page)){
-			$query = $this->pdo->prepare("DELETE FROM pages WHERE id=:id LIMIT 1");
+			$query = $this->pdo->prepare("DELETE FROM pages WHERE page_id=:id LIMIT 1");
 			$query ->execute(array(
 				":id" => $page
 				));
@@ -83,7 +96,7 @@ private $pass;
 	}
 
 	public function deleteArticle($article){
-		$query = $this->pdo->prepare("DELETE FROM articles WHERE id=:id LIMIT 1");
+		$query = $this->pdo->prepare("DELETE FROM articles WHERE article_id=:id LIMIT 1");
 		$query->execute(array(
 			":id" => $article
 			));	
@@ -92,7 +105,7 @@ private $pass;
 
 	public function deleteUser ($delete) {
 		if (is_numeric($delete)){
-			$query = $this->pdo->prepare ("DELETE FROM users WHERE id=:id LIMIT 1");
+			$query = $this->pdo->prepare ("DELETE FROM users WHERE user_id=:id LIMIT 1");
 			$query->execute (array(
 				":id" => $delete
 				));
@@ -107,7 +120,7 @@ private $pass;
 
 	public function deleteRole($role){
 		if (is_numeric($role)){
-			$query = $this->pdo->prepare ("DELETE FROM roles WHERE id=:id LIMIT 1");
+			$query = $this->pdo->prepare ("DELETE FROM roles WHERE role_id=:id LIMIT 1");
 			$query->execute(array(
 				":id" => $role
 				));
@@ -121,14 +134,21 @@ private $pass;
 	}
 
 	public function deleteResources($id){
-		$query = $this->pdo->prepare("DELETE FROM resources WHERE id=:id LIMIT 1");
+		$query = $this->pdo->prepare("DELETE FROM resources WHERE resource_id=:id LIMIT 1");
+		$query->execute(array(
+			":id" => $id
+			));
+	}
+	//Brisanje permisiona po artiklu
+	public function deleteResourcesByArticle($id){
+		$query = $this->pdo->prepare("DELETE FROM resources WHERE article_id = :id");
 		$query->execute(array(
 			":id" => $id
 			));
 	}
 
-	public function deleteResourcesByArticle($id){
-		$query = $this->pdo->prepare("DELETE FROM resources WHERE article_id = :id");
+	public function deleteSlider($id){
+		$query = $this->pdo->prepare("DELETE FROM slider WHERE slider_id = :id LIMIT 1");
 		$query->execute(array(
 			":id" => $id
 			));
@@ -137,7 +157,7 @@ private $pass;
 	//Read deo
 	public function searchPage($page){
 		if(is_numeric($page)){
-			$query = $this->pdo->prepare ("SELECT * FROM pages WHERE id=:id");
+			$query = $this->pdo->prepare ("SELECT * FROM pages WHERE page_id=:id");
 			$query->execute(array(
 				":id" => $page
 				));
@@ -155,7 +175,7 @@ private $pass;
 
 	//Pretraga strane, broj->id , tekst -> nazivu stranice
 	public function searchArticle ($article){
-			$query = $this->pdo->prepare($this->search_article . " WHERE articles.id=:id");
+			$query = $this->pdo->prepare($this->search_article . " WHERE articles.article_id=:id");
 			$query->execute(array(
 				":id" => $article
 				));
@@ -197,7 +217,7 @@ private $pass;
 	//Pretraga korisnika, broj ->Id-u, tekst po nazivu korisnika
 	public function searchUser($user){
 		if (is_numeric($user)){
-			$query = $this->pdo->prepare ($this->search_user . " WHERE users.id = :id");
+			$query = $this->pdo->prepare ($this->search_user . " WHERE users.user_id = :id");
 			$query->execute(array(
 				":id" => $user
 				));
@@ -229,7 +249,7 @@ private $pass;
 	//Pretraga uloge, broj-> po id-u, tekst po nazivu uloge.
 	public function searchRole ($role){
 		if(is_numeric($role)){
-			$query = $this->pdo->prepare ("SELECT * FROM roles WHERE id=:id");
+			$query = $this->pdo->prepare ("SELECT * FROM roles WHERE role_id=:id");
 			$query->execute(array(
 				":id" => $role
 				));
@@ -242,28 +262,44 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-
+	//pretraga dozvola
 	public function searchResources($id){
-		$query = $this->pdo->prepare ($this->search_resources . " WHERE resources.id = :id");
+		$query = $this->pdo->prepare ($this->search_resources . " WHERE resources.resource_id = :id");
 		$query->execute(array(
 			":id" => $id
 			));
 		return $query->fetchAll (PDO::FETCH_ASSOC);
 	}
-
-	public function searchResourcesByArticles ($id){
+	//pretraga dozvola po artiklu
+	public function searchResourcesByArticle ($id){
 		$query = $this->pdo->prepare ($this->search_resources . " WHERE resources.article_id = :id");
 		$query->execute(array(
 			":id" => $id
 			));
 		return $query->fetchAll (PDO::FETCH_ASSOC);
 	}
-
+	//pretraga dozvola po artiklu i ovlascenju
 	public function searchResourcesByArticleAndRole ($id,$role){
-		$query = $this->pdo->prepare ($this->search_resources . " WHERE article_id = :id AND role_id = :role");
+		$query = $this->pdo->prepare ($this->search_resources . " WHERE resources.article_id = :id AND resources.role_id = :role");
 		$query->execute(array(
 			":id" => $id,
 			":role" => $role
+			));
+		return $query->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function searchSlider($id){
+		$query = $this->pdo->prepare ("SELECT * FROM slider WHERE slider_id=:id");
+		$query->execute(array(
+			":id" => $id
+			));
+		return $query->fetchAll(PDO::FETCH_ASSOC);
+	}
+	//pretraga slika po aktivnosti
+	public function searchSliderByActivity($active = 0){
+		$query = $this->pdo->prepare("SELECT * FROM slider WHERE active=:active");
+		$query->execute(array(
+			":active" => $active
 			));
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
@@ -272,7 +308,7 @@ private $pass;
 	//Promena naziva strane, ako je broj onda po ID-u,u suprotnom po nazivu
 	public function changePage ($what,$with){
 		if(is_numeric($what)){
-			$query = $this->pdo->prepare("UPDATE pages SET title = :with WHERE id = :what");
+			$query = $this->pdo->prepare("UPDATE pages SET title = :with WHERE page_id = :what");
 			$query->execute(array(
 				":what" => $what,
 				":with" => $with
@@ -289,7 +325,7 @@ private $pass;
 
 	//Promena sadrzaja u Artiklu po ID-u
 	public function changeArticleContent($what,$with){
-		$query = $this->pdo->prepare ("UPDATE articles SET content = :with WHERE id=:what");
+		$query = $this->pdo->prepare ("UPDATE articles SET content = :with WHERE article_id=:what");
 		$query->execute(array(
 			":with" => $with,
 			":what" => $what
@@ -297,7 +333,7 @@ private $pass;
 	}
 	//Promena ID stranice, po id-u artikla
 	public function changeArticlePageId($what,$with){
-		$query = $this->pdo->prepare ("UPDATE articles SET page_id = :with WHERE id=:what");
+		$query = $this->pdo->prepare ("UPDATE articles SET page_id = :with WHERE article_id=:what");
 		$query->execute(array(
 			":with" => $with,
 			":what" => $what
@@ -305,7 +341,7 @@ private $pass;
 	}
 	//Promena korisnika koji je pisao artikal
 	public function changeArticleUserId($what,$with){
-		$query = $this->pdo->prepare ("UPDATE articles SET user_id = :with WHERE id=:what");
+		$query = $this->pdo->prepare ("UPDATE articles SET user_id = :with WHERE article_id=:what");
 		$query->execute(array(
 			":with" => $with,
 			":what" => $what
@@ -316,7 +352,7 @@ private $pass;
 	public function changeUsername ($what,$with){
 
 		if(is_numeric($what)){
-			$query = $this->pdo->prepare("UPDATE users SET username=:with WHERE id=:what");
+			$query = $this->pdo->prepare("UPDATE users SET username=:with WHERE user_id=:what");
 			$query->execute(array(
 				":with" => $with, 
 				":what" => $what
@@ -334,7 +370,7 @@ private $pass;
 	public function changePassword ($what,$with) {
 		$pass = new Security;
 		if (is_numeric($what)){
-			$query = $this->pdo->prepare("UPDATE users SET password = :with WHERE id=:what LIMIT 1");
+			$query = $this->pdo->prepare("UPDATE users SET password = :with WHERE user_id=:what LIMIT 1");
 			$query->execute(array(
 				":what" => $what,
 				":with" => $this->pass->salt_password($with)
@@ -351,7 +387,7 @@ private $pass;
 	//Promena permissiona korisnika
 	public function changeUserRole ($what,$with){
 		if (is_numeric($what)){
-			$query = $this->pdo->prepare ("UPDATE users SET role_id = :with WHERE id=:what LIMIT 1");
+			$query = $this->pdo->prepare ("UPDATE users SET role_id = :with WHERE user_id=:what LIMIT 1");
 			$query->execute(array(
 				":what" => $what,
 				":with" => $with
@@ -365,10 +401,10 @@ private $pass;
 				));
 		}
 	}
-
+	//promena dozvola
 	public function changeRole ($what, $with){
 		if (is_numeric($what)){
-			$query = $this->pdo->prepare ("UPDATE roles SET role= :with WHERE id=:what");
+			$query = $this->pdo->prepare ("UPDATE roles SET role= :with WHERE role_id=:what");
 
 			$query->execute(array(
 				":what" => $what,
@@ -383,12 +419,28 @@ private $pass;
 				));
 		}
 	}
-
+	//promena dozvola u resorsima
 	public function changeResourcesRole($what,$with){
-		$query = $this->pdo->prepare ("UPDATE resources SET role_id = :with WHERE id=:what");
+		$query = $this->pdo->prepare ("UPDATE resources SET role_id = :with WHERE resource_id=:what");
 		$query->execute(array(
 			":with" => $with,
 			":what" => $what
+			));
+	}
+	//promena url-a slidera
+	public function changeSliderUrl ($what,$with){
+		$query = $this->pdo->prepare("UPDATE slider SET url=:with WHERE slider_id=:what");
+		$query->execute(array(
+			":with" => $with,
+			":what" => $what
+			));
+	}
+	//promena aktivnosti slidera,s'tim da ako se napise samo za koji ID, vraca 0, ako se stavi broj 1, stavlja kao aktivan
+	public function changeSliderActivity($what,$with = ""){
+		$query=$this->pdo->prepare("UPDATE slider SET active=:with WHERE slider_id=:what");
+		$query->execute(array(
+			":with" =>$with,
+			":what" =>$what
 			));
 	}
 	
