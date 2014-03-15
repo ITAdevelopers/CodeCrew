@@ -5,7 +5,7 @@ class Database{
 	private $host = 'localhost';
 	private $dbname = 'code_crew';
 	private $username = 'root';
-	private $password ='poiu123321';  
+	private $password ='';  
 	private $opt = array(
 	      PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 	      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
