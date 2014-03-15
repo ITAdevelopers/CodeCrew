@@ -12,6 +12,16 @@ margin-right:auto;
 
 
 }
+h1,h2,h3,h4 {
+  font:'Cantata One', Georgia, serif;
+  color: #2f99ba;
+}
+ 
+p {
+  font: 400 16px/1.6 'Imprima', Verdana, Helvetica, sans-serif;
+  
+  color: #232525;
+}
 
 
 

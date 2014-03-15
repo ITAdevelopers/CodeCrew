@@ -43,7 +43,7 @@ $stranica = "";
 
 //Ako ne postoji promenljiva $_GET['title'] uzimamo kao id stranice prvu stranicu 
 if(!isset($_GET['title'])){
-	$id = $stranice_menu['0']['id'];
+	$id = $stranice_menu['0']['page_id'];
 	
 	//Metod artical_get() povlaci arikal za pocetnu stranicu tj ako nije definisana stranica
 	$stranica = $objekat->artikal_get($id);
