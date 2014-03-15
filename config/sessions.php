@@ -48,14 +48,14 @@ public function _close(){
 	
 public function _read($id){
 
-	$stm = $this->pdo->prepare('SELECT data FROM sessions WHERE id = :id');
-	$stm->bindParam(':id', $id);
+	$stm = $this->pdo->prepare('SELECT data FROM sessions WHERE id = ?');
+	
 	
 	
 
-	if($stm->execute()){
+	if($stm->execute( array($id))){
 
-		$row = $stm->fetchAll();
+		$row = $stm->fetch(PDO::FETCH_ASSOC);
 
 		return $row['data'];
 

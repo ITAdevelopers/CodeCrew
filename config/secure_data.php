@@ -12,4 +12,14 @@ class Secure_data {
     function decrypt($input) {
         return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->securekey, base64_decode($input), MCRYPT_MODE_ECB, $this->iv));
     }
+
+    public function sessionSet($name, $data){
+
+       return $_SESSION[$name] = $this->encrypt($data);
+    }
+
+    public function readData($name){
+
+        return $this->decrypt($_SESSION[$name]);
+    }
 }
