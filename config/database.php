@@ -1,6 +1,6 @@
 <?php
 
-class database{
+class Database{
 
 	private $host = 'localhost';
 	private $dbname = 'code_crew';
