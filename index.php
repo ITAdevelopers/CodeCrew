@@ -8,16 +8,21 @@ require "config/paths.php";
 
 //Ukljucena podesavanja baze podataka
 require "config/database.php";
-
+//Ukljucenje klase login
 require 'modules/login/class_login.php';
 
 //Security klassa sa metodima za ekripciju i zastitu skripte
 require "config/security.php";
-
+//Ukljucenje klase croud
 require "modules/cms/crud.php";
 
 //Metode vezane za ucitavanje podataka iz baze podataka  vezane za CMS sistem
 require "modules/cms/functions_cms.php";
+
+require "config/sessions.php";
+require "config/secure_data.php";
+require "config/validation.php";
+require "modules/registration/registration.php";
 
 
 
@@ -26,12 +31,25 @@ $security = new Security();
 
 //Kreiramo objekat Database koji je zaduzen za konekciju
 $conn = new database();
-$login = new Login($conn);
+$sessions = new Sessions($conn);
+$secure_data = new Secure_data();
+
+$login = new Login($conn, $secure_data);
 $crud = new Crud($conn, $security);
+$val = new Validation();
+
+
 
 
 //Kreiramo objekat Functions_cms i u konstruktor prosledjujemo konekciju sa bazom (PDO klassa)
 $objekat = new Functions_cms($crud);
+
+$action = $security->filter_input($_GET['action']);
+    if($action == 'login'){
+        require_once THEMES_PATH ."login.php";
+        exit();
+            
+    }
 
 
 
@@ -62,6 +80,8 @@ if($title_sec == 'false'){
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
 require "themes/index.php";
+
+
 ?>
 <br />
 <?php

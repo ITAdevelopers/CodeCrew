@@ -9,9 +9,9 @@ if(!isset($title_sec)){
  ?>
 <!doctype html>
 <head>
-<title>Twiter</title>
+
 <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title><?php echo $page; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -27,13 +27,14 @@ if(!isset($title_sec)){
     <link href="<?php echo URL_PATH . 'css/bootstrap-responsive.css'; ?>" rel="stylesheet">
     <link href="http://fonts.googleapis.com/css?family=Cantata+One" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=Imprima" rel="stylesheet" type="text/css">
-	<link href="<?php echo URL_PATH . 'css/style.css'; ?>" rel="stylesheet">
+	
 
 	
 	<!-- Slider styles -->
 	
 	<link rel="stylesheet" href="<?php echo URL_PATH . 'nivo-slider/nivo-slider.css'; ?>" type="text/css" />
 	<link rel="stylesheet" href="<?php echo URL_PATH . 'nivo-slider/themes/default/default.css'; ?>" type="text/css" />
+    <link href="<?php echo URL_PATH . 'css/style.css'; ?>" rel="stylesheet">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="<?php echo URL_PATH . 'js/bootstrap.js'; ?>" type="text/javascript"></script>
 	
@@ -47,7 +48,7 @@ if(!isset($title_sec)){
  <script type="text/javascript">
 function login_get(){
 $.ajax({
-	url: "<?php echo URL_PATH; ?>login.php",
+	url: "<?php echo URL; ?>index.php?action=login",
 	success: function(data){
 		$('#sidebar').html(data);
 	},
@@ -88,7 +89,7 @@ $.ajax({
                     echo 'active';
                 }
 
-             ?>"><a href="<?php echo URL . 'index.php?title='.$menu['title']; ?>"><?php echo $menu['title'] ?></a></li>
+             ?>"><a href="<?php echo URL . $menu['title']; ?>"><?php echo $menu['title'] ?></a></li>
 			
 			<?php } ?>
             

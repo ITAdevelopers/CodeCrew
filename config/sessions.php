@@ -1,5 +1,5 @@
 <?php 
-class Session{
+class Sessions{
 	private $pdo;
 	
 public function __construct(database $conn){

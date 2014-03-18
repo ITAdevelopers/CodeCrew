@@ -9,8 +9,8 @@
                 $this->crud = $crud;
                 $this->val = $validate;
                 // podtke dobijene iz html formi filtriramo radi predostroznosti funkcijom trim
-                $this->username = trim($_POST['username']);
-                $this->password = trim($_POST['password']);
+                $this->username = nemesis;//trim($_POST['username']);
+                $this->password = proba123;//trim($_POST['password']);
                
                 $this->errors = array();
             }
@@ -25,13 +25,14 @@
 
             if (isset($this->username) && isset($this->password)){
                 if ($this->val->isUserNameValid($this->username) && $this->val->isPasswordValid($this->password)){
-                    if ($this->username == $this->crud->searchUser($this->username)) {
+                    $rezultat = $this->crud->searchUser($this->username);
+                    if (count($rezultat) > 0 ) {
                            $this->_errors[] = "Korisničko ime je zauzeto";
                        } else {
                           $this->crud->addUser($this->username,$this->password);
                        }
                    } else {
-                    $this->errors[] =  "Nepravilno unešene vrednosti!. Moraju biti slova ili brojevi i najmanje 5 karaktera.";
+                    $this->_errors[] =  "Nepravilno unešene vrednosti!. Moraju biti slova ili brojevi i najmanje 5 karaktera.";
                    }
 
             } else {

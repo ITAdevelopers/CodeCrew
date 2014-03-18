@@ -1,5 +1,5 @@
 <?php
-class Secure_data {
+class Secure_data{
     private $securekey, $iv;
     function __construct() {
     	$textkey = "proba";
@@ -23,3 +23,4 @@ class Secure_data {
         return $this->decrypt($_SESSION[$name]);
     }
 }
+?>

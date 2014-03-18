@@ -16,10 +16,12 @@ class Login
   private $_login;
   private $_token;
   private $pdo;
+  private $encrypt;
 
   // Specijalna metoda konstruktor koja sluzi za podesavanje osobina objekta klase 
-  public function __construct(database $conn)
+  public function __construct(database $conn,Secure_data $encrypt)
   {
+    $this->encrypt = $encrypt;
   	$this->con = $conn;
 	$this->pdo = $this->con->connect();
     $this->_errors = array();
@@ -28,9 +30,9 @@ class Login
     @$this->_token  = $_POST['token'];
 
     @$this->_id       = 0;
-    @$this->_username = ($this->_login)? $this->filter($_POST['username']) : $_SESSION['username'];
+    @$this->_username = ($this->_login)? $this->filter($_POST['username']) : $this->encrypt->readData('username');
     @$this->_password = ($this->_login)? $this->filter($_POST['password']) : '';
-    @$this->_passcript  = ($this->_login)? $this->salt_password($this->_password) : $_SESSION['password'];
+    @$this->_passcript  = ($this->_login)? $this->salt_password($this->_password) : $this->encrypt->readData('password');
   }
 
   public function isLoggedIn()
@@ -80,13 +82,13 @@ class Login
 
    
         // Kreiranje zasebnog pripremnog upitnog objekta 
-      $stm=$this->pdo->prepare("SELECT id FROM users WHERE username =? AND password =?");
+      $stm=$this->pdo->prepare("SELECT user_id FROM users WHERE username =? AND password =?");
       $stm->execute(array($this->_username,$this->_passcript));
 
       // rezutat upita ,u ovom slucaju asocijativni niz 
       $login = $stm->fetchAll();
      
-     if($login == true)
+     if(count($login) > 0)
         {
         return true;
         } 
@@ -116,9 +118,9 @@ class Login
 
   public function registerSession()
   {
-    $_SESSION['ID'] = $this->_id;
-    $_SESSION['username'] = $this->_username;
-    $_SESSION['password'] = $this->_passcript;
+    $this->encrypt->sessionSet('ID', $this->_id);
+    $this->encrypt->sessionSet('username', $this->_username);
+    $this->encrypt->sessionSet('password', $this->_passcript);
   }
 
 
