@@ -155,6 +155,10 @@ private $pass;
 	}
 
 	//Read deo
+
+	//Pretraga po ID-u artikla
+	//Pretraga strane, broj->id , tekst -> nazivu stranice
+
 	public function searchPage($page){
 		if(is_numeric($page)){
 			$query = $this->pdo->prepare ("SELECT * FROM pages WHERE page_id=:id");
@@ -171,9 +175,7 @@ private $pass;
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	//Pretraga po ID-u artikla
 
-	//Pretraga strane, broj->id , tekst -> nazivu stranice
 	public function searchArticle ($article){
 			$query = $this->pdo->prepare($this->search_article . " WHERE articles.article_id=:id");
 			$query->execute(array(
@@ -181,6 +183,7 @@ private $pass;
 				));
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
+
 	//Ako je broj pretraga po ID-u korisnika,ako je tekst po imenu korisnika
 	public function searchArticleByUser ($user) {
 		if (is_numeric($user)){
@@ -443,6 +446,23 @@ private $pass;
 			":what" =>$what
 			));
 	}
+	//Funkcije vezane za neke klase
+	//Za paginaciju count i limit search
+	public function count($table) {
+		$query = $this->pdo->prepare ("SELECT COUNT(*) FROM $table");
+		$query->execute();
+		return $query->fetchAll(PDO::FETCH_BOTH);
+	}
+
+	public function limit ($table,$start,$display){
+		$query = $this->pdo->prepare ("SELECT * FROM $table LIMIT :start,:display");
+		$query->bindParam (":start", $start, PDO::PARAM_INT);
+		$query->bindParam (":display",$display,PDO::PARAM_INT);
+		$query->execute();
+		return $query->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+
 	
 	public function list_pages()
 	{
