@@ -4,25 +4,25 @@
    $mtime = $mtime[1] + $mtime[0]; 
    $starttime = $mtime; 
 // Ukljucujemo podesavanja putanja
-require "config/paths.php";
+require_once "config/paths.php";
 
 //Ukljucena podesavanja baze podataka
-require "config/database.php";
+require_once CONFIG_PATH . "database.php";
 //Ukljucenje klase login
-require 'modules/login/class_login.php';
+require MODULE_PATH . 'login/class_login.php';
 
 //Security klassa sa metodima za ekripciju i zastitu skripte
-require "config/security.php";
+require_once CONFIG_PATH . "security.php";
 //Ukljucenje klase croud
-require "modules/cms/crud.php";
+require_once MODULE_PATH . "cms/crud.php";
 
 //Metode vezane za ucitavanje podataka iz baze podataka  vezane za CMS sistem
-require "modules/cms/functions_cms.php";
+require_once MODULE_PATH . "cms/functions_cms.php";
 
-require "config/sessions.php";
-require "config/secure_data.php";
-require "config/validation.php";
-require "modules/registration/registration.php";
+require_once CONFIG_PATH . "sessions.php";
+require_once CONFIG_PATH . "secure_data.php";
+require_once CONFIG_PATH . "validation.php";
+require_once MODULE_PATH . "registration/registration.php";
 
 
 
@@ -36,7 +36,7 @@ $secure_data = new Secure_data();
 
 $login = new Login($conn, $secure_data);
 $crud = new Crud($conn, $security);
-$val = new Validation();
+//$val = new Validation();
 
 
 

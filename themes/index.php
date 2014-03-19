@@ -45,25 +45,7 @@ if(!isset($title_sec)){
     <![endif]-->
 
     <!-- Fav and touch icons -->
- <script type="text/javascript">
-function login_get(){
-$.ajax({
-	url: "<?php echo URL; ?>index.php?action=login",
-	success: function(data){
-		$('#sidebar').html(data);
-	},
-	error:function(){
 
-		$('#sidebar').html('Zao nam je opcija login nije dostupna.');
-	}
-
-});
-
-}
-
-
-
- </script>  
 
 
 </head>
@@ -89,7 +71,7 @@ $.ajax({
                     echo 'active';
                 }
 
-             ?>"><a href="<?php echo URL . $menu['title']; ?>"><?php echo $menu['title'] ?></a></li>
+             ?>"><a href="<?php echo URL .'index.php?title=' . $menu['title']; ?>"><?php echo $menu['title'] ?></a></li>
 			
 			<?php } ?>
             
@@ -130,7 +112,7 @@ $.ajax({
 <script type="text/javascript">
 $(window).load(function() {
 $ ("#slider").nivoSlider ();
-login_get();
+
 });
 </script>
 <div id="container"> 
@@ -150,7 +132,7 @@ echo $prva["content"];
 </p>
 </div>
 <div class="span4 well" id="sidebar">
-
+<?php require_once THEMES_PATH . "login.php"; ?>
 </div>
 
 

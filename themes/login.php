@@ -1,12 +1,6 @@
 <?php
 
-if(isset($_POST['register'])){
-    $register->registerUser();
-     header('Location: index.php');
-     exit();
-    
 
-}
 if(isset($_POST['login']))
 {
  
@@ -24,22 +18,27 @@ if(isset($_POST['login']))
             }
         }
 if($login->isLoggedIn()){
-    $data_user = '<ul id="user_profile">
-<li><span class="icon-user"></span>'. $secure_data->readData('username') .' </li>
+    ob_start();
+    echo '
+    <h3>Dobrodosao/la, '.$secure_data->readData('username') .'</h3>
+    <ul id="user_profile">
+
+<li><i class="icon-wrench"></i> Podesavanja naloga </li>
+<li><i class="icon-off"></i> Izloguj se </li>
 
 
 
 </ul>';
-    ob_start();
-    echo $data_user;
-    ob_flush();
+   ob_flush();
+    
+    
 }else{
     $random = md5(uniqid(mt_rand(),true));
     $token = $secure_data->sessionSet('token', $random);
     
     $action = URL . 'index.php?action=login';
-    
-    $html = '<!doctype html>
+    ob_start();
+    echo '<!doctype html>
 <head>
 <title>Twiter</title>
 <meta charset="utf-8">
@@ -63,42 +62,23 @@ if($login->isLoggedIn()){
     <label>Username:</label>
     <input type="text" name="username" placeholder="Vas username...">
     
-    <label>Password:</label>
+     <label>Password:</label>
     <input type="password" name="password" placeholder="Vas password">
     <input type="hidden" name="token" value="' . $token . '" />
     
     
-    <input type="submit" name="login" class="btn btn-primary" value="Log In" /> 
-
-    <a href="#myModal" role="button" class="btn" data-toggle="modal">Register</a>
-        <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-           <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="myModalLabel">Registration</h3>
-            </div>
-            <div class="modal-body">
-                <label for"username">Your desired username</label>
-                <input type="text" name="username"><br>
-                <label for"password">Your password</label>
-                <input type="password" name="password">
-            </div>
-            <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button class="btn btn-primary" name="register">Save changes</button>
-            </div>
-        </div>
-
-
+    <input type="submit" name="login" class="btn btn-primary" value="Log In" />
     </fieldset>
     </form>
 </div>
 </div>
 </body>
 </html>';
-    ob_start();
-
-    echo $html;
     ob_flush();
+   
+
+   
+    
 
 }
 ?>
