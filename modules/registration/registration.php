@@ -2,15 +2,16 @@
 
 	class registration
 	{
-
+    private $username;
+    private $password;
 		public function __construct(Crud $crud,Validation $validate)
             {
 
                 $this->crud = $crud;
                 $this->val = $validate;
                 // podtke dobijene iz html formi filtriramo radi predostroznosti funkcijom trim
-                $this->username = nemesis;//trim($_POST['username']);
-                $this->password = proba123;//trim($_POST['password']);
+                @$this->username = trim($_POST['username']);
+                @$this->password = trim($_POST['password']);
                
                 $this->errors = array();
             }
@@ -40,12 +41,12 @@
             }
         }
 
-         /* Za ispis gresaka koristimo foreach petlju 
+          /*Za ispis gresaka koristimo foreach petlju 
           
            foreach($error as $msg) {
             echo $msg;
            }
-       
         */
+        
 
     }
