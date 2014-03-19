@@ -9,7 +9,7 @@ require_once "config/paths.php";
 //Ukljucena podesavanja baze podataka
 require_once CONFIG_PATH . "database.php";
 //Ukljucenje klase login
-require MODULE_PATH . 'login/class_login.php';
+require_once MODULE_PATH . 'login/class_login.php';
 
 //Security klassa sa metodima za ekripciju i zastitu skripte
 require_once CONFIG_PATH . "security.php";
@@ -79,7 +79,7 @@ if($title_sec == 'false'){
 }
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
-require THEMES_PATH . "index.php";
+require_once THEMES_PATH . "index.php";
 
 
 ?>
