@@ -79,7 +79,7 @@ if($title_sec == 'false'){
 }
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
-require "themes/index.php";
+require THEMES_PATH . "index.php";
 
 
 ?>
