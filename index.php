@@ -19,9 +19,16 @@ require_once MODULE_PATH . "cms/crud.php";
 //Metode vezane za ucitavanje podataka iz baze podataka  vezane za CMS sistem
 require_once MODULE_PATH . "cms/functions_cms.php";
 
+//Klasa sessions namenjena za smestanje sesije u bazu podataka
 require_once CONFIG_PATH . "sessions.php";
+
+//Klasa secure data namenjena za kriptovanje sesije
 require_once CONFIG_PATH . "secure_data.php";
+
+//klasa validacija namenjena za proveravanje podataka pri registraciji
 require_once CONFIG_PATH . "validation.php";
+
+//klasa registracija namenjena za registraciju novih korisnika.
 require_once MODULE_PATH . "registration/registration.php";
 
 
@@ -31,25 +38,43 @@ $security = new Security();
 
 //Kreiramo objekat Database koji je zaduzen za konekciju
 $conn = new database();
+
+//Kreiranje objekta Login
 $sessions = new Sessions($conn);
+
+//Kreiranje objekta Secure_data
 $secure_data = new Secure_data();
 
+//Kreiranje objekta Login
 $login = new Login($conn, $secure_data);
-$crud = new Crud($conn, $security);
-//$val = new Validation();
 
+//Kreiranje objekta Crud namenjenog za rad sa bazom podataka
+$crud = new Crud($conn, $security);
+/*$val = new Validation();
+$register = new registration($crud, $val);
+
+
+$register->registerUser();
+
+*/
 
 
 
 //Kreiramo objekat Functions_cms i u konstruktor prosledjujemo konekciju sa bazom (PDO klassa)
 $objekat = new Functions_cms($crud);
 
+
+//Ako je promenljiva action = login uljucujemo je u index.php i stopiramo skriptu zato sto ostatak nije potreban.
 $action = $security->filter_input($_GET['action']);
     if($action == 'login'){
         require_once THEMES_PATH ."login.php";
         exit();
             
     }
+if($action == 'logout'){
+    session_destroy();
+    header('Location: index.php');
+}
 
 
 
@@ -80,6 +105,7 @@ if($title_sec == 'false'){
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema
 require_once THEMES_PATH . "index.php";
+
 
 
 ?>

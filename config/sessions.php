@@ -1,6 +1,10 @@
 <?php 
 class Sessions{
 	private $pdo;
+    private $id;
+    private $username;
+    private $password;
+    private $token;
 	
 public function __construct(database $conn){
 	
@@ -16,12 +20,42 @@ public function __construct(database $conn){
 	
 	
 	);
+   ini_set( 'session.cookie_httponly', 1 );
+    session_name('CodeCrew'); 
+    session_set_cookie_params(3600,"/", ".localhost"); 
 	session_start();
-	
+    $this->get_data();
+    session_regenerate_id(true);
+    $this->set_data();
+
 	
 	
 	
 	}
+    
+private function get_data(){
+    if(isset($_SESSION['ID'])){
+       $this->id = $_SESSION['ID'];
+    }
+    if(isset($_SESSION['username'])){
+        $this->username = $_SESSION['username'];
+    }
+    if(isset($_SESSION['password'])){
+        $this->password = $_SESSION['password'];
+    }
+    if(isset($_SESSION['token'])){
+        $this->token = $_SESSION['token'];
+    }
+    
+}
+    
+private function set_data(){
+    $_SESSION['ID'] = $this->id;
+    $_SESSION['username'] = $this->username;
+    $_SESSION['password'] = $this->password;
+    $_SESSION['token']    = $this->token;
+}
+
 public function _open(){
 	//provera da li je uspesna konekcija sa bazom
 	if($this->pdo){
