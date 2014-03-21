@@ -30,6 +30,7 @@ require_once CONFIG_PATH . "validation.php";
 
 //klasa registracija namenjena za registraciju novih korisnika.
 require_once MODULE_PATH . "registration/registration.php";
+require_once MODULE_PATH . "cms/permissions.php";
 
 
 
@@ -50,14 +51,9 @@ $login = new Login($conn, $secure_data);
 
 //Kreiranje objekta Crud namenjenog za rad sa bazom podataka
 $crud = new Crud($conn, $security);
-/*$val = new Validation();
+$val = new Validation();
 $register = new registration($crud, $val);
-
-
-$register->registerUser();
-
-*/
-
+$perm = new Permission($crud, $secure_data);
 
 
 //Kreiramo objekat Functions_cms i u konstruktor prosledjujemo konekciju sa bazom (PDO klassa)
@@ -65,7 +61,7 @@ $objekat = new Functions_cms($crud);
 
 
 //Ako je promenljiva action = login uljucujemo je u index.php i stopiramo skriptu zato sto ostatak nije potreban.
-$action = $security->filter_input($_GET['action']);
+@$action = $security->filter_input($_GET['action']);
     if($action == 'login'){
         require_once THEMES_PATH ."login.php";
         exit();
@@ -77,7 +73,6 @@ if($action == 'logout'){
 }
 
 
-
 //Pozivam metod Functions_cms pages_get(), kao povrat dobijam niz koji sadrzi sve redove tabele pages...to nam je glavni meni
 $stranice_menu = $objekat->pages_get();
 
@@ -87,20 +82,24 @@ $stranica = "";
 //Ako ne postoji promenljiva $_GET['title'] uzimamo kao id stranice prvu stranicu 
 if(!isset($_GET['title'])){
 	$id = $stranice_menu['0']['page_id'];
-	
+  $article_id = $crud->searchArticleByPage($id);
+	$perm->check($article_id[0]['article_id'], $article_id[0]['permission']);
 	//Metod artical_get() povlaci arikal za pocetnu stranicu tj ako nije definisana stranica
 	$stranica = $objekat->artikal_get($id);
 
 	//U slucaju da postoji $_GET['title'] povuci ce zadnji arikal vezan za tu stranicu.
-}else{
+}
+else{
 	$title_sec = $security->filter_input($_GET['title']);
 
-if($title_sec == 'false'){
-	header('Location: error.php');
-	die();
-}
+    if($title_sec == 'false'){
+  	header('Location: error.php');
+	 die();
+  }
 	
   $stranica = $objekat->artikal_get($title_sec);
+  $perm->check($stranica[0]['article_id'], $stranica[0]['permission']);
+
 }
 
 //Ukljucujemo themes/index.php koji je zaduzen za izgled....tj to nam je tema

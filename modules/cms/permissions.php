@@ -1,12 +1,9 @@
 <?php
 class Permission {
-	private $conn;
-	private $pdo;
-	private $pass;
-	private $login;
+	private $secure;
 	private $crud;
-	private $id;
 	private $permission;
+	private $id;
 	private $user_permissions;
 	private $article;
 	private $role;
@@ -14,33 +11,33 @@ class Permission {
 
 
 
-	public function __construct (database $conn, Security $security,Login $log, Crud $crud){
-		$this->pass = $security;
-		$this->conn = $conn;
-		$this->pdo = $this->conn->connect();
-		$this->login = $log;
+	public function __construct (Crud $crud, Secure_data $secure){
 		$this->crud = $crud;
-		$this->article = $_GET['article'];
-		$this->id = $_SESSION['id'];
+		$this->secure = $secure;
 	}
-
-	public function check($user, $article){
-		$user = $this->id;
-		$article = $this->article;
-		$this->permission = $this->crud->searchArticle($article);
-		$this->user_permissions = $this->crud->searchUser($this->id);
-
-		if ($this->permission[0]['permission'] == 1){			
-			$this->role = $this->crud->searchResourcesByArticleAndRole($this->article,$this->user_permissions[0]['role_id']);
-			if ($this->role)	{
-				echo "ima zastitu i korisnik moze da koristi";
-			}
+	public function check($article, $permission){
+		//Ako je dozvola 0, nema provera i svako moze otvoriti stranicu
+		if ($permission == 0){}
+		//ako je provera 1 i ako je postavljen ID u sesiji
+		elseif ($permission == 1 && isset($_SESSION['ID'])){
+			//id izvlacimo iz Sesije
+			$this->id = $this->secure->readData('ID');
+			//Ocitavamo koje pristupe ima korisnik pomocu id-a
+			$this->user_permissions = $this->crud->searchUser($this->id);
+			//Proveravamo da li u tabeli resources postoji kolona gde su ID i korisnik		
+			@$this->role = $this->crud->searchResourcesByArticleAndRole($article,$this->user_permissions[0]['role_id']);
+			//Ako postoji ijedna kolona, korisnika pustamo
+			if ($this->role)	{}
+			//ako ne postoji, vracamo ga na stranicu da se uloguje
 			else{
-				echo "ima zastitu i korisnik ne moze da koristi";
+				header ("location: unathorised.php");
+				exit();
 			}
 		}
-		else{
-			echo "nema zastitu";
+		//ako je dozvola za stranicu 1, a korisnik nije ulogovan (nema sesiju), vracamo ga na login stranu
+		elseif($permission == 1 || !isset($_SESSION['ID'])){
+			header ("location: unathorised.php");
+			exit();
 		}
 	}
 }

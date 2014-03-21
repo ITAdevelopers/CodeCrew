@@ -87,9 +87,11 @@ class Login
 
       // rezutat upita ,u ovom slucaju asocijativni niz 
       $login = $stm->fetchAll();
+
      
      if(count($login) > 0)
         {
+        $this->_id = $login[0]['user_id'];
         return true;
         } 
       else 
