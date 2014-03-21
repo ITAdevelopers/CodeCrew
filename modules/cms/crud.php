@@ -35,7 +35,7 @@ private $pass;
 		 ));
 	}
 
-	public function addArticle ($page_id,$content,$user_id,$permission = "") {
+	public function addArticle ($page_id,$content,$user_id,$permission = 0) {
 		$query = $this->pdo->prepare("INSERT INTO articles (article_id,page_id,content,user_id,created,permission) VALUES (null,:page_id,:content,:user_id,NOW(),:permission)");
 		$query->execute(array(
 			':page_id' => $page_id,
@@ -70,7 +70,7 @@ private $pass;
 			));
 	}
 	//dodavanje slidera, ako se stavio samo url, dodaje ime i na aktivnost stavlja 0, a ako se stavi ime i 1, stavlja da odma' bude aktivan
-	public function addSlider ($url, $active = ""){
+	public function addSlider ($url, $active = 0){
 		$query = $this->pdo->prepare ("INSERT INTO slider (slider_id,url,active) VALUES (null,:url, :active)");
 		$query->execute(array(
 			":url" => $url,
@@ -439,7 +439,7 @@ private $pass;
 			));
 	}
 	//promena aktivnosti slidera,s'tim da ako se napise samo za koji ID, vraca 0, ako se stavi broj 1, stavlja kao aktivan
-	public function changeSliderActivity($what,$with = ""){
+	public function changeSliderActivity($what,$with = 0){
 		$query=$this->pdo->prepare("UPDATE slider SET active=:with WHERE slider_id=:what");
 		$query->execute(array(
 			":with" =>$with,

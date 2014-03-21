@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 14, 2014 at 10:08 AM
+-- Generation Time: Mar 21, 2014 at 05:26 PM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.12
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
   `content` text,
   `user_id` int(11) unsigned DEFAULT NULL,
   `created` datetime DEFAULT NULL,
-  `permission` bit(1) NOT NULL,
+  `permission` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`article_id`),
   KEY `fk_page` (`page_id`),
   KEY `fk_user` (`user_id`)
@@ -85,13 +85,26 @@ CREATE TABLE IF NOT EXISTS `roles` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `sessions`
+--
+
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` varchar(255) NOT NULL,
+  `access` int(10) unsigned DEFAULT NULL,
+  `data` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `slider`
 --
 
 CREATE TABLE IF NOT EXISTS `slider` (
   `slider_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(255) DEFAULT NULL,
-  `active` bit(1) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`slider_id`),
   UNIQUE KEY `url` (`url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
