@@ -24,7 +24,9 @@ require_once "config/paths.php";
     <style type="text/css">
       body {
        
-        background-color: #ff0033;
+       background: url("<?php echo URL_PATH; ?>images/pozadina_01.jpg");
+        background-repeat: no-repeat;
+          background-size: cover;
       }
     </style>
     <link href="<?php echo URL_PATH . 'css/bootstrap-responsive.css'; ?>" rel="stylesheet">
@@ -32,16 +34,15 @@ require_once "config/paths.php";
         <style type="text/css">
         
         #greska{
-            background-color: #ff0033;
+            
             width:80%;
             margin-left:auto;
             margin-right: auto;
             margin-top: 5%;
+            color: #000;
             
         }
-            #greska a{
-                color: #3300bb;
-            }
+         
         
         
         
