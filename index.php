@@ -8,6 +8,7 @@ require_once "config/paths.php";
 
 //Ukljucena podesavanja baze podataka
 require_once CONFIG_PATH . "database.php";
+
 //Ukljucenje klase login
 require_once MODULE_PATH . 'login/class_login.php';
 
@@ -30,6 +31,8 @@ require_once CONFIG_PATH . "validation.php";
 
 //klasa registracija namenjena za registraciju novih korisnika.
 require_once MODULE_PATH . "registration/registration.php";
+
+//Klasa namenjena za proveru dozvola
 require_once MODULE_PATH . "cms/permissions.php";
 
 
@@ -70,6 +73,7 @@ $objekat = new Functions_cms($crud);
 if($action == 'logout'){
     session_destroy();
     header('Location: index.php');
+	exit();
 }
 
 
@@ -98,7 +102,15 @@ else{
   }
 	
   $stranica = $objekat->artikal_get($title_sec);
+  //Provera da li takva stranica i artikal postoje
+  if(count($stranica) < 1){
+  	//Ako ne, korisnika saljemo na error.php
+  	header("Location: error.php");
+	  exit();
+  }
   $perm->check($stranica[0]['article_id'], $stranica[0]['permission']);
+  
+    
 
 }
 

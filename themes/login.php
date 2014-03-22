@@ -92,8 +92,8 @@ if($login->isLoggedIn()){
                 <input type="password" name="password">
             </div>
             <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button class="btn btn-primary" name="register">Register</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Otkazi</button>
+                <button class="btn btn-primary" name="register">Registracija</button>
                 </form>
                    </div>
         </div>
