@@ -20,9 +20,6 @@ public  function upload_file(){
 
     $file = explode(".", $_FILES['file']['name']);
 
-   
-
-  
     $temp = end($file);
 
 
@@ -31,6 +28,12 @@ public  function upload_file(){
    || ($_FILES["file"]["type"] == "image/x-png") || ($_FILES["file"]["type"] == "image/png")) && ($_FILES["file"]["size"] < 2000000) && in_array($temp, $dozvoljeni_formati)){
        
        if(is_uploaded_file($_FILES['file']['tmp_name']) || $_FILES["file"]["error"] < 1){
+            
+            if(file_exists(BASE_PATH . "/uploads/" . $_FILES['file']['name'])){
+                $date = new date('d-m-Y');
+                $_FILES['file']['name'] = $file[0] . $date . "." . $temp;
+
+            }
 
            move_uploaded_file($_FILES['file']['tmp_name'], "uploads/" . $_FILES['file']['name']);
 
