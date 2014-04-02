@@ -463,7 +463,11 @@ private $pass;
 	}
 
 
-	
+	public function listUsers(){
+		$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id ASC");
+		$query->execute();
+		return $query->fetchAll();
+	}
 	public function list_pages()
 	{
 		$stm = $this->pdo->prepare('SELECT * FROM pages ORDER BY redosled ASC');

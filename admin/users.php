@@ -43,7 +43,7 @@
 	            </a>
 	            <div style="clear: both"></div>
 	        </div>
-	        <div class="grid_12">
+	        <div class="grid_12" id="users">
 
 	            <?php
 	            	if ($action == "list"){
