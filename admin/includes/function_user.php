@@ -18,7 +18,6 @@
                 	echo '<th width="5%">User Id</th><th width="30%">Username</th><th width="5%">Role</th><th width="15%">Last_Login</th><th width="15%">Account Created</th><th width="20%">Actions</th>';
                 echo '</tr></thead><tbody>';
                 $pages = $this->paginate->paginate(10);
-                print_r ($pages);
                 $users = $this->paginate->fetch_results();
 
                	foreach ($users as $user){
