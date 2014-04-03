@@ -454,8 +454,18 @@ private $pass;
 		return $query->fetchAll(PDO::FETCH_BOTH);
 	}
 
-	public function limitUsers ($start,$display){
-		$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id LIMIT :start,:display");
+	public function paginate ($table, $start,$display){
+		switch ($table) {
+			case "users":
+				$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id LIMIT :start,:display");
+				break;
+			case "pages":
+				$query = $this->pdo->prepare (" SELECT * FROM pages ORDER BY page_id LIMIT :start,:display");
+				break;
+			case "articles":
+				$query = $this->pdo->prepare ($this->search_article . " ORDER BY article_id LIMIT :start,:display");
+				break;
+		}
 		$query->bindParam (":start", $start, PDO::PARAM_INT);
 		$query->bindParam (":display",$display,PDO::PARAM_INT);
 		$query->execute();
