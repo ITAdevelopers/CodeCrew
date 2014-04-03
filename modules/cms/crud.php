@@ -454,8 +454,8 @@ private $pass;
 		return $query->fetchAll(PDO::FETCH_BOTH);
 	}
 
-	public function limit ($table,$start,$display){
-		$query = $this->pdo->prepare ("SELECT * FROM $table LIMIT :start,:display");
+	public function limitUsers ($start,$display){
+		$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id LIMIT :start,:display");
 		$query->bindParam (":start", $start, PDO::PARAM_INT);
 		$query->bindParam (":display",$display,PDO::PARAM_INT);
 		$query->execute();

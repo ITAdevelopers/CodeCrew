@@ -2,12 +2,14 @@
 	class Function_user{
 		private $crud;
 		private $val;
+		private $paginate;
 
-		public function __construct(Crud $crud, Validation $val){
+		public function __construct(Crud $crud, Validation $val, Pagination $paginate){
 			$this->crud = $crud;
 			$this->val = $val;
+			$this->paginate = $paginate;
 		}
-
+		//Funkcija za izlistavanje svih korisnika
 		public function listUsers(){
 			echo "<div class='module'>";
 			echo "<h2><span>List of all users</span></h2>";
@@ -15,7 +17,10 @@
                 echo '<thead><tr>';
                 	echo '<th width="5%">User Id</th><th width="30%">Username</th><th width="5%">Role</th><th width="15%">Last_Login</th><th width="15%">Account Created</th><th width="20%">Actions</th>';
                 echo '</tr></thead><tbody>';
-               	$users = $this->crud->listUsers();
+                $pages = $this->paginate->paginate(10);
+                print_r ($pages);
+                $users = $this->paginate->fetch_results();
+
                	foreach ($users as $user){
 			         echo "<tr><td>" . $user['user_id'] . "</td>";
 			         echo "<td>" . $user['username'] . "</td>";
@@ -26,7 +31,12 @@
 			         echo "<a href='users.php?action=delete&id=".$user['user_id']."''><img src='img/minus-circle.gif' alt='delete' title='Delete User'></a></td></tr>";
 			    }
 			echo "</tbody></table></div>";
+			
+			foreach ($pages as $p){
+				echo "<a href=".$_SERVER['PHP_SELF']."?action=list&page=$p id='pagination'>$p</a>";
 			}
+		}
+
 
 		public function editUser($id){
 			if(!isset($id)){
@@ -43,29 +53,35 @@
 				$role = $_POST['role'];
 				if ($user['username'] != $username){
 					if ($this->val->isUserNameValid($username)){
-					$this->crud->changeUsername($id, $username);
-					echo "username is changed from ".$old_username." to ". $username;
+						if (!($this->crud->searchUser($username))){
+							$this->crud->changeUsername($id, $username);
+							echo "<span class='notification n-success'>username is changed from $old_username to $username</span>";	
+						}
+						else{
+							echo '<span class="notification n-error">Username already exists</span>';
+						}
 					}
 					else {
-						echo "Username is not valid";
+						echo '<span class="notification n-error">Username not valid</span>';		
 					}
 				}
 				if (!empty($password)){
 					if ($password == $password2){
 						if ($this->val->isPasswordValid($password)){
 							$this->crud->changePassword($id, $password);
-							echo "Password had been changed";
+							echo "<span class='notification n-success'>Password has been changed</span>";
 						}
 						else {
-							echo "Password is not valid";
+							echo '<span class="notification n-error">Password is not valid</span>';
 						}
 					}
 					else {
-						echo "Passwords must be same";
+						echo '<span class="notification n-error">Password must be same</span>';	
 					}
 				}
 				if ($user['role_id'] != $role){
 					$this->crud->changeUserRole($id, $role);
+					echo "<span class='notification n-success'>Role had been changed from $old_role to ".$this->crud->searchRole($role)[0]['role']."</span>";	
 					echo "Role had been changed from ".$old_role." to ".$this->crud->searchRole($role)[0]['role'];
 				}
 			}
@@ -76,7 +92,7 @@
 	            echo '<div class="module-body">';
 					echo "<form method='post' action='".$_SERVER['PHP_SELF']."?action=edit&id=".$id."'>";
 						echo "<label for='id'>User id:</label>";
-						echo "<input type='text' name='id' value='".$user['user_id']."'></input><br>";
+						echo "<input type='text' name='id' value='".$user['user_id']."' disabled></input><br>";
 						echo "<label for'username'>Username: </label>";
 						echo "<input type='text' name='username' value='$username'></input><br>";
 						echo "<label for='password'>New password</label>";
@@ -109,31 +125,36 @@
 			$role =(isset($_POST['role']))? $_POST['role'] : "";
 			if (isset($_POST['register'])){
 				if($this->val->isUserNameValid($username)){
-					if ($password == $password1){
-						if ($this->val->isPasswordValid($password)){
-							$this->crud->addUser($username, $password, $role);
-							$user = $this->crud->searchUser($username)[0];
-							echo '<span class="notification n-success">Successfuly added user</span>';
-							echo "<div class='module'>";
-								echo "<h2><span>You have added user with this data:</span></h2>";
-								echo '<div class="module-body">';
-								echo "<strong>Id:</strong> ".$user['user_id']."<br>";
-								echo "<strong>Username:</strong> ".$user['username']."<br>";
-								echo "<strong>Role:</strong> ".$user['role']."<br>";
-								echo "<strong>Date Created:</strong> ".$user['created'] . "<br>";
-								echo "</div></div>";
-							exit;
+					if (!($this->crud->searchUser($username))){
+						if ($password == $password1){
+							if ($this->val->isPasswordValid($password)){
+								$this->crud->addUser($username, $password, $role);
+								$user = $this->crud->searchUser($username)[0];
+								echo '<span class="notification n-success">Successfuly added user</span>';
+								echo "<div class='module'>";
+									echo "<h2><span>You have added user with this data:</span></h2>";
+									echo '<div class="module-body">';
+									echo "<strong>Id:</strong> ".$user['user_id']."<br>";
+									echo "<strong>Username:</strong> ".$user['username']."<br>";
+									echo "<strong>Role:</strong> ".$user['role']."<br>";
+									echo "<strong>Date Created:</strong> ".$user['created'] . "<br>";
+									echo "</div></div>";
+								exit;
+							}
+							else{
+								echo '<span class="notification n-error">Password is not valid</span>';	
+							}
 						}
-						else{
-							echo "Password is not valid";
-						}
+						else {
+							echo '<span class="notification n-error">Password must be same</span>';	
+						}		
 					}
-					else {
-						echo "Password's are not same";
-					}		
+					else{
+						echo '<span class="notification n-error">Username already exists</span>';	
+					}
 				}
 				else{
-					echo "Username is not valid";
+					echo '<span class="notification n-error">Username is not valid</span>';	
 				}
 			}
 			echo "<form method='post' action='".$_SERVER['PHP_SELF']."?action=create'>";

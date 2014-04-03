@@ -784,3 +784,23 @@ a.dashboard-module span {
 	margin-top: 10px; 
 	display: block; 
 	}
+
+/* -------------------- Custom -------------------- */
+
+#pagination{
+	border:1px solid black;
+	padding: 3px;
+	margin: 2px;
+	
+}
+
+#pagination:active,
+#pagination:visited {
+	text-decoration: none;
+	color: black;
+}
+
+#pagination:hover{
+	text-decoration:none;
+	color:blue;
+}
