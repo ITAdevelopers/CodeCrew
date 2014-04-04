@@ -25,7 +25,8 @@ class Security{
 			return trim($input);
 		}
 		else {
-			return false;
+			header('Location: ../error.php');
+			exit;
 		}
 
 	}
