@@ -11,13 +11,15 @@
 		}
 		//Funkcija za izlistavanje svih korisnika
 		public function listUsers(){
+			$page = (isset($_GET['page']))? $_GET['page'] : 1;
+
 			echo "<div class='module'>";
 			echo "<h2><span>List of all users</span></h2>";
             echo '<table id="myTable" class="tablesorter">';
                 echo '<thead><tr>';
                 	echo '<th width="5%">User Id</th><th width="30%">Username</th><th width="5%">Role</th><th width="15%">Last_Login</th><th width="15%">Account Created</th><th width="20%">Actions</th>';
                 echo '</tr></thead><tbody>';
-                $pages = $this->paginate->paginate(10);
+               	$pages = $this->paginate->paginate("users",10);
                 $users = $this->paginate->fetch_results();
 
                	foreach ($users as $user){
@@ -30,10 +32,23 @@
 			         echo "<a href='users.php?action=delete&id=".$user['user_id']."''><img src='img/minus-circle.gif' alt='delete' title='Delete User'></a></td></tr>";
 			    }
 			echo "</tbody></table></div>";
-			
-			foreach ($pages as $p){
-				echo "<a href=".$_SERVER['PHP_SELF']."?action=list&page=$p id='pagination'>$p</a>";
-			}
+			echo "<div class='pagination'>";
+				echo "<a href='".$_SERVER['PHP_SELF']."?action=list&amp;page=1' class='button'><span><img src='img/arrow-stop-180-small.gif' height='9' width='12' alt='First'>First</span></a>";
+				echo "<a href='".$_SERVER['PHP_SELF']."?action=list&amp;page=". $page - 1 ."' class='button'><span><img src='img/arrow-180-small.gif' height='9' width='12' alt='Previous'>Previous</span></a>";
+				echo "<div class='numbers'>";
+					echo "<span>Page:</span>";
+						foreach ($pages as $p){
+							if ($p == $page)
+								echo "<span>$p</span><span>|</span>";
+							else
+								echo "<a href=".$_SERVER['PHP_SELF']."?action=list&page=$p>$p</a><span>|</span>";
+						}
+					echo "</div>";
+			echo "<a href='".$_SERVER['PHP_SELF']."?action=list&amp;page=".$page+1 ."' class='button'><span><src='img/arrow-000-small.gif' height='9' width='12' alt='Next'>Next</span></a>";
+			echo '<a href class="button last"><span><img src="img/arrow-stop-180-small.gif" height="9" width="12" alt="First">Last</span></a>';
+
+			echo '<div style="clear: both;"></div>';
+			echo "</div>";
 		}
 
 
