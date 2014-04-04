@@ -3,6 +3,7 @@
 	require_once "../config/paths.php";
 	// Ukljucujemo funkcije za korisnika
 	require_once "includes/function_user.php";
+	require_once "includes/search.php";
 	//Ukljucujemo header stranice
 	require_once "includes/header.php";
 	//Ukljucena podesavanja baze podataka
@@ -14,6 +15,7 @@
 	//Ukljucujemo validaciju
 	require_once CONFIG_PATH . "validation.php";
 	require_once MODULE_PATH . "cms/pagination.php";
+
 	//Kreiramo objekat Security
 	$security = new Security();
 	//Kreiramo objekat Database koji je zaduzen za konekciju
@@ -24,14 +26,20 @@
 	$val = new Validation();
 	//Kreiranje objekta paginacije
 	$pagination = new Pagination ($crud);
+	$search = new Search ($crud,$val);
 	//Kreiranje objekta funkcije
-	$function = new Function_user($crud,$val,$pagination);
+	$function = new Function_user($crud,$val,$pagination,$search);
+
 	//Proveravamo da li je stavljena akcija u URL-u,ako nije,stavljamo joj vrednost null
 	$action = (isset($_GET['action']))? $security->filter_input($_GET['action']) : null;
 	//Proveravamo da li je stavljen ID
 	$id = (isset($_GET['id']))? $security->filter_input($_GET['id']) : null;
+
+	$page = (isset($_GET['page']))? $security->filter_input($_GET['page']) : null;
 	//CSS da oznaci na kojoj stranici se nalazimo
 	$current = "style='text-decoration: underline;color:#0063be; font-weight:bold '";
+
+
 ?>
 	<div class="container_12">
 		<div class="grid_12">
