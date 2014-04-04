@@ -19,7 +19,7 @@
 				$user = $this->crud->$searchinput($search);
 				//Ako nije prazan user,vraca nam vrednosti pretrage
 				if (!empty($user))
-					return $user[0][strtolower($what) . '_id'];
+					return $user;
 				//Ako jeste prazan,vraca nam gresku,da ne postoji takva vrednost
 				else
 					echo '<span class="notification n-error">Ne postojaca vrednost</span>';

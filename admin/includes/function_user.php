@@ -44,7 +44,7 @@
 		public function editUser($id){
 			//Provera da li postoji ID korisnika,ako ne postoji,daje nam polje za pretragu istih
 			if(!isset($id)){
-				$id = $this->search->searchByName('User');
+				$id = $this->search->searchByName('User')[0]['user_id'];
 			}
 			//Prebrojavanje Rola,potrebno zbog padajuceg menija
 			$num_of_roles = $this->crud->count('roles')[0][0];
@@ -208,7 +208,7 @@
 		function delUser($id){
 			//Ako nije postavljen ID,poziva se funkcija search i polje za pretragu
 			if(!isset($id)){
-				$id = $this->search->searchByName('User');
+				$id = $this->search->searchByName('User')[0]['user_id'];
 			}
 			//Izvlacenje podataka vezanih za korisnika kojeg hocemo da brisemo
 			$user = $this->crud->searchUser($id)[0];
