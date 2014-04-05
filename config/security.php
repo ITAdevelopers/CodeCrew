@@ -25,11 +25,18 @@ class Security{
 			return trim($input);
 		}
 		else {
-			header('Location: ../error.php');
-			exit;
+                    header('Location: ../error.php');
 		}
 
 	}
+        public function filter_int($input){
+            if (preg_match('/^[0-9]+$/', $input)){
+			return trim($input);
+		}
+		else {
+                    header('Location: ../error.php');
+		}
+        }
 
 
 }

@@ -478,6 +478,9 @@ private $pass;
 		$query->execute();
 		return $query->fetchAll();
 	}
+
+	/* Dodao @nenad za potrebe partije */ 
+	
 	public function list_pages()
 	{
 		$stm = $this->pdo->prepare('SELECT * FROM pages ORDER BY redosled ASC');
@@ -486,5 +489,43 @@ private $pass;
 		
 		return $pages;
 	}
+
+    public function list_articles_crud(){
+
+        $query = $this->pdo->prepare("SELECT * FROM articles INNER JOIN pages ON articles.page_id = pages.page_id INNER JOIN users ON articles.user_id = users.user_id");
+        $query->execute();
+
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+        
+    }
+    public function get_all_rolles(){
+       $query = $this->pdo->prepare("SELECT * FROM roles");
+       $query->execute();
+       return $query->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+    public function last_id(){
+        
+        $query = $this->pdo->prepare("SELECT article_id FROM articles ORDER BY article_id DESC LIMIT 1");
+        $query->execute();
+        return $query->fetchAll();
+    }
+    public function update_articles($id, $page, $content){
+        
+        $query = $this->pdo->prepare('UPDATE articles SET page_id = :page, content = :content WHERE article_id = :id');
+
+        $query->execute(array(":page" => $page, ":content" => $content, ":id" => $id  ));
+       
+    }
+    public function deleteResourcesByArticleAndRole($id, $role){
+        
+        $query = $this->pdo->prepare('DELETE FROM resources WHERE article_id = :id AND role_id = :role');
+        $query->execute(array(":id" => $id , ":role" => $role));
+        
+    }
+    public function update_permision($id, $perm){
+        $query = $this->pdo->prepare("UPDATE articles SET permission = :perm WHERE article_id = :id");
+        $query->execute(array(':perm' => $perm, ':id' => $id));
+    }
 }
 ?>
