@@ -47,17 +47,9 @@ require_once CONFIG_PATH . "secure_data.php";//Klasa secure data namenjena za kr
 
     $action = (isset($_GET['action']))? $security->filter_input($_GET['action']) : '';
     $article_id = (isset($_GET['article_id']))? $security->filter_int($_GET['article_id']) : '';
+    $user_id = (isset($_GET['user_id']))? $security->filter_int($_GET['user_id']) : '';
     
-   if($action == 'false'){
-       echo $action;
-       header("Location: error.php");
-       exit();
-   }
-      if(isset($article_id) && $article_id == 'false'){
-       
-       header("Location: error.php");
-       exit();
-   }
+
    
 
     
@@ -121,6 +113,9 @@ require_once CONFIG_PATH . "secure_data.php";//Klasa secure data namenjena za kr
                 elseif($action == 'delete' && isset ($article_id)){
                     
                     $function->delete_article($article_id);
+                }
+                elseif($action == "articlesbyuser" && isset($user_id)){
+                    $function->list_articles_by_user($user_id);
                 }
 
 	            ?>

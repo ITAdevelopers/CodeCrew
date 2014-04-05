@@ -16,7 +16,68 @@ public function __construct(Crud $crud, Validation $validation, Secure_data $sec
     $this->paginate = $paginate;
 
 }
+public function list_articles_by_user($id){
+$articles = $this->crud->searchArticleByUser ($id);
 
+    if(is_null($articles)){
+        echo "Trenutno nema artikala u bazi.";
+    }else{
+ ob_start();
+  echo' <div class="float-right">
+                        <a href="articles.php?action=create" class="button">
+                        	<span>Novi artikal <img src="img/plus-small.gif" tppabs="http://www.xooom.pl/work/magicadmin/images/plus-small.gif" width="12" height="9" alt="Novi artikal" /></span>
+                        </a>
+                    </div>    
+                </div>';
+
+echo ' <div class="module">
+                	<h2><span>News</span></h2>
+                    <div class="module-table-body">
+                    	<form action="">
+                        <table id="myTable" class="tablesorter">
+                        	<thead>
+                                <tr>
+                                    <th style="width:5%">#</th>
+                                    <th style="width:20%">Page</th>
+                                    <th style="width:21%">Content</th>
+                                    <th style="width:13%">Created</th>
+                                    <th style="width:13%">Permision</th>
+                                    <th style="width:15%">Created by</th>
+                                    <th style="width:10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>';
+    foreach($articles as $a){
+     echo ' <tr>
+                                    <td class="align-center">'. $a["article_id"] .'</td>
+                                    <td>'. $a["title"] .'</td>
+                                    <td>' . substr($a["content"], 0, 55) . '</td>
+                                    <td> ' .$a["created"] . '</td>
+                                    <td> <a href="articles.php?action=changeperm&article_id='.$a["article_id"].'">' .$a["permission"] . '</td>
+                                    <td> ' .$a["username"] . '</td>
+                                    <td>                                    	
+                                        <a href="articles.php?action=delete&article_id='.$a["article_id"].'"><img src="img/minus-circle.gif" tppabs="http://www.xooom.pl/work/magicadmin/images/minus-circle.gif" width="16" height="16" alt="not published" /></a>
+                                        <a href="articles.php?action=edit&article_id='.$a["article_id"].'"><img src="img/pencil.gif" tppabs="http://www.xooom.pl/work/magicadmin/images/pencil.gif" width="16" height="16" alt="edit" /></a>
+                                       
+                                    </td>
+                                </tr>';
+
+    }
+    echo '</tbody>
+                        </table>
+                        </form>
+                        <div class="pager" id="pager">
+                          
+                        </div>
+                        
+                        <div style="clear: both"></div>
+                     </div> <!-- End .module-table-body -->
+                </div> <!-- End .module -->';
+                 
+
+ob_flush();
+    }
+}
 public function list_articles(){
     
     $articles =$this->paginate->paginate("articles",10);
