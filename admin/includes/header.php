@@ -141,7 +141,7 @@
                         <div id="logo">
                             <ul id="nav">
                                 <li id="<?php if ($current == "index.php") echo 'current' ?>"><a href="index.php">Novosti</a></li>
-                                <li id="<?php if ($current == "tickets.php") echo 'current' ?>"><a href="tickets.php">Tiketi</a></li>
+                                <li id="<?php if ($current == "articles.php") echo 'current' ?>"><a href="articles.php">Artikli</a></li>
                                 <li id="<?php if ($current == 'users.php') echo 'current' ?>"><a href="users.php">Korisnici</a></li>
                                 
                             </ul>
