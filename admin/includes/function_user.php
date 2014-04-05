@@ -27,7 +27,7 @@
                	//Ispisujemo vrednosti koje smo dobili u tabelu.
                	foreach ($users as $user){
 			         echo "<tr><td>" . $user['user_id'] . "</td>";
-			         echo "<td>" . $user['username'] . "</td>";
+			         echo "<td><a href='articles.php?action=articlesbyuser&user_id=".$user['user_id']."'>" . $user['username'] . "</a></td>";
 			         echo "<td>" . $user['role'] . "</td>";
 			         echo "<td>" . $user['last_login'] . "</td>";
 			         echo "<td>" . $user['created'] . "</td>";
