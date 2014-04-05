@@ -6,18 +6,20 @@ private $crud;
 private $validate;
 private $secure;
 public $errors;
+private $paginate;
 
-public function __construct(Crud $crud, Validation $validation, Secure_data $secure){
+public function __construct(Crud $crud, Validation $validation, Secure_data $secure, Pagination $paginate){
     
     $this->crud = $crud;
     $this->validate = $validation;
     $this->secure = $secure;
+    $this->paginate = $paginate;
 
 }
 
 public function list_articles(){
     
-    $articles = $this->crud->list_articles_crud();
+    $articles =$this->paginate->paginate("articles",10);
 
     if(is_null($articles)){
         echo "Trenutno nema artikala u bazi.";
@@ -73,6 +75,8 @@ echo ' <div class="module">
                         <div style="clear: both"></div>
                      </div> <!-- End .module-table-body -->
                 </div> <!-- End .module -->';
+                  $this->paginate->write_results('list');
+
 ob_flush();
 
     

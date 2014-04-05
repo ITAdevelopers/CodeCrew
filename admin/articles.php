@@ -23,6 +23,7 @@ require_once CONFIG_PATH . "secure_data.php";//Klasa secure data namenjena za kr
     require CONFIG_PATH . "/validation.php";
 
     require_once "includes/function_articles.php";
+    require_once MODULE_PATH . "cms/pagination.php";
 	//Kreiramo objekat Security
 	$security = new Security();
 
@@ -32,12 +33,13 @@ require_once CONFIG_PATH . "secure_data.php";//Klasa secure data namenjena za kr
     $sessions = new Sessions($conn);
 	//Kreiranje objekta Crud namenjenog za rad sa bazom podataka
 	$crud = new Crud($conn, $security);
+    $paginate = new Pagination($crud);
     
     
 
     //Kreiranje objekta Secure_data
     $secure_data = new Secure_data();
-    $function = new Function_articles($crud, $validation, $secure_data);
+    $function = new Function_articles($crud, $validation, $secure_data,$paginate);
 
    
 	
