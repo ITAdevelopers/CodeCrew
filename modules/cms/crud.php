@@ -510,7 +510,7 @@ private $pass;
         $query = $this->pdo->prepare("UPDATE articles SET permission = :perm WHERE article_id = :id");
         $query->execute(array(':perm' => $perm, ':id' => $id));
     }
-    public function paginate ($table, $start,$display){
+	public function paginate ($table, $start,$display){
 		switch ($table) {
 			case "users":
 				$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id LIMIT :start,:display");
@@ -521,6 +521,12 @@ private $pass;
 			case "articles":
 				$query = $this->pdo->prepare ($this->search_article . " ORDER BY article_id LIMIT :start,:display");
 				break;
+		}
+		$query->bindParam (":start", $start, PDO::PARAM_INT);
+		$query->bindParam (":display",$display,PDO::PARAM_INT);
+		$query->execute();
+		return $query->fetchAll(PDO::FETCH_ASSOC);
+
 	}
 }
 ?>
