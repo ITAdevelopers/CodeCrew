@@ -64,7 +64,7 @@ $objekat = new Functions_cms($crud);
 
 
 //Ako je promenljiva action = login uljucujemo je u index.php i stopiramo skriptu zato sto ostatak nije potreban.
-@$action = $security->filter_input($_GET['action']);
+@$action = (isset($_GET['action']))? $security->filter_input($_GET['action']) : '';
     if($action == 'login'){
         require_once THEMES_PATH ."login.php";
         exit();
@@ -94,7 +94,7 @@ if(!isset($_GET['title'])){
 	//U slucaju da postoji $_GET['title'] povuci ce zadnji arikal vezan za tu stranicu.
 }
 else{
-	$title_sec = $security->filter_input($_GET['title']);
+	$title_sec = (isset($_GET['title']))? $security->filter_input($_GET['title']) : '';
 
     if($title_sec == 'false'){
   	header('Location: error.php');

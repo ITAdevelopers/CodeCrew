@@ -133,7 +133,7 @@ private $pass;
 		}
 	}
 
-	public function deleteResources($id){
+	public function editesources($id){
 		$query = $this->pdo->prepare("DELETE FROM resources WHERE resource_id=:id LIMIT 1");
 		$query->execute(array(
 			":id" => $id
@@ -201,16 +201,16 @@ private $pass;
 		}
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-	//Pretraga po strani, ako je broj po ID-u,ako je tekst po imenu
+	//Pretraga po strani, ako je broj po ID-u,ako je tekst po imenu @ nenad dodao
 	public function searchArticleByPage ($page) {
 		if (is_numeric($page)){
-		$query = $this->pdo->prepare ($this->search_article . " WHERE articles.page_id=:id");
+		$query = $this->pdo->prepare ($this->search_article . " WHERE articles.page_id=:id ORDER BY article_id DESC LIMIT 1");
 		$query->execute(array(
 			":id" => $page
 			));
 		}
 		else {
-			$query = $this->pdo->prepare ($this->search_article . " WHERE pages.title=:id");
+			$query = $this->pdo->prepare ($this->search_article . " WHERE pages.title=:id ORDER BY article_id DESC LIMIT 1");
 			$query->execute(array(
 			":id" => $page
 			));
@@ -454,32 +454,15 @@ private $pass;
 		return $query->fetchAll(PDO::FETCH_BOTH);
 	}
 
-	public function paginate ($table, $start,$display){
-		switch ($table) {
-			case "users":
-				$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id LIMIT :start,:display");
-				break;
-			case "pages":
-				$query = $this->pdo->prepare (" SELECT * FROM pages ORDER BY page_id LIMIT :start,:display");
-				break;
-			case "articles":
-				$query = $this->pdo->prepare ($this->search_article . " ORDER BY article_id LIMIT :start,:display");
-				break;
-		}
+	public function limit ($table,$start,$display){
+		$query = $this->pdo->prepare ("SELECT * FROM $table LIMIT :start,:display");
 		$query->bindParam (":start", $start, PDO::PARAM_INT);
 		$query->bindParam (":display",$display,PDO::PARAM_INT);
 		$query->execute();
 		return $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-
-	public function listUsers(){
-		$query = $this->pdo->prepare ($this->search_user . " ORDER BY user_id ASC");
-		$query->execute();
-		return $query->fetchAll();
-	}
-
-	/* Dodao @nenad za potrebe partije */ 
+    /* Dodao @nenad za potrebe partije */ 
 	
 	public function list_pages()
 	{

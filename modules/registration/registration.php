@@ -9,8 +9,8 @@
                 $this->crud = $crud;
                 $this->val = $validate;
                 // podtke dobijene iz html formi filtriramo radi predostroznosti funkcijom trim
-                $this->username = nemesis;//trim($_POST['username']);
-                $this->password = proba123;//trim($_POST['password']);
+                $this->username = isset($_POST['username'])? trim($_POST['username']) : null;
+                $this->password = isset($_POST['password'])? trim($_POST['password']) : null ;
                
                 $this->errors = array();
             }

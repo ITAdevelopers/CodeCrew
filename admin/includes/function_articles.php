@@ -261,13 +261,11 @@ public function update_permisions_table($id){
     foreach ($roles as $r){
         $polje = 'box' . $r['role_id'];
         $input = (isset($_POST[$polje]))? $_POST[$polje] : false;
-        if(!is_bool($input)){
-            header("Location ../error.php");
-            exit();
-        }
-        
+     
+    
        
         $current_set = $this->crud->searchResourcesByArticleAndRole($id, $r['role_id']);
+       
         
        
         
@@ -278,6 +276,7 @@ public function update_permisions_table($id){
                 
             }  
         elseif($input == true && count($current_set) < 1 ) {
+            
             $this->crud->addResource($id, $r['role_id']);    
             }
         elseif($input == false && count($current_set) > 0){

@@ -22,7 +22,7 @@ public function __construct(database $conn){
 	);
    ini_set( 'session.cookie_httponly', 1 );
     session_name('CodeCrew'); 
-    session_set_cookie_params(3600,"/", ".localhost"); 
+   // session_set_cookie_params(3600,"/", ".localhost"); 
 	session_start();
     $this->get_data();
     session_regenerate_id(true);
